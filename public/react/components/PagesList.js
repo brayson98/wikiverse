@@ -1,12 +1,17 @@
 import React from 'react'
-import { Page } from './Page'
+import { Link } from 'react-router-dom'
 
 export const PagesList = ({ pages }) => {
-  return <>
-		{
-			pages.map((page, idx) => {
-				return <Page page={page} key={idx} />
-			})
-		}
-	</>
+  return (
+    <div>
+      {pages.map((page) => (
+        <div key={page.id}>
+          <h3>
+            <Link to={`/page/${page.slug}`}>{page.title}</Link>
+          </h3>
+        </div>
+      ))}
+    </div>
+  )
 }
+export default PagesList;
