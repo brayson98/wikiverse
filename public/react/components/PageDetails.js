@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import apiURL from '../api'
 import './PageDetails.css'  // Import the CSS file
 
-export const PageDetails = () => {
+export const PageDetails = ({onPageDelete}) => {
   const { slug } = useParams() // Get slug from the URL
   const [page, setPage] = useState(null)
   const navigate = useNavigate() // Hook to navigate programmatically
@@ -22,6 +22,22 @@ export const PageDetails = () => {
     fetchPageDetails()
   }, [slug]) // Re-fetch when the slug changes
 
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`${apiURL}/wiki/${slug}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        console.log("Page deleted successfully")
+        navigate("/")
+        onPageDelete()
+      }
+    } catch (err) {
+      console.error("Error during delete", err)
+    }
+  }
+
   if (!page) return <p>Loading...</p> // Show loading text while fetching the data
 
   return (
@@ -31,7 +47,8 @@ export const PageDetails = () => {
       <p><strong>Content:</strong> {page.content}</p>
       <p><strong>Tags:</strong> <span className="tags">{page.tags.map(tag => tag.name).join(', ')}</span></p>
       <p><strong>Date Created:</strong> {new Date(page.createdAt).toLocaleDateString()}</p>
-      <button onClick={() => navigate('/')}>Back to List</button>
+      <button onClick={() => navigate('/')} className='back-btn'>Back to List</button>
+      <button onClick={handleDelete} className='delete-btn'>DELETE</button>
     </div>
   )
 }
